@@ -1,0 +1,124 @@
+DR STRANGE VS CORONAVIRUS
+BACKEND Q2
+DIKJISTRA SOLN
+
+#include <bits/stdc++.h>
+using namespace std;
+    	 vector<vector<pair<int,int>>>planets; // graph for planets routes
+		 vector<vector<int>>timestamp; // demons timing
+		 priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;//min heap
+		 int n;
+		 int ans = INT_MAX;
+	
+int main()
+{
+
+		 int m;
+		 cin>>n>>m;
+		 
+		planets.resize(n+1);
+	
+		 
+		 int a,b,c;
+		 
+		 for(int i=0;i<m;i++){
+		 	
+		 	 cin>>a>>b>>c;
+		 	 planets[a].push_back({b,c});
+		 	 
+		 	
+		 	
+		 }
+		 
+		 for(int i=1;i<=m;i++)
+		 {
+		 	  int k;
+		 	  cin>>k;
+		 	  vector<int>time_of_universe;
+		 	  int t;
+		 	  for(int i=0;i<k;i++)
+		 	  {
+		 	  	    
+		 	  	    cin>>t;
+		 	  	    
+		 	  	    time_of_universe.push_back(t);
+		 	  	    
+		 	  	    
+		 	  }
+		 	  
+		 	  timestamp.push_back(time_of_universe);
+		 	  
+		 	
+		 }
+		
+	        
+			int count=0;
+	    	 
+	    	 pq.push({count,1});
+	    	 bool visited[n+1];
+	    	 memset(visited,false,sizeof(visited));
+	    	 
+	    	 
+	    	while(!pq.empty())
+	    	{
+	    		
+	    	pair<int,int> start = pq.top();
+	    	
+	    	  
+	    	        
+	    	        	if(start.second == n)
+	    	        	{
+	    	        	  ans = start.first ;
+	    	        	  break;
+	    	        	}
+	    	        	
+	    	        
+	        vector<pair<int,int>>p = planets[start.second];
+	        
+	           pq.pop();
+	    
+	         for(int j=0;j<p.size();j++){
+				vector<int>t = timestamp[p[j].first-1];
+			count=0;
+	    	
+	    	 int l=0; 
+	    	 int h = t.size()-1;
+	    	 //binary_search 
+	    	 while(l<=h)
+	    	 {
+	    	 	
+	    	 	int mid = (l+(h-l)/2);
+	    	 	
+	    	 	if(t[mid] == start.first+p[j].second)
+	    	 	{
+	    	 		
+	    	 	    	while(mid<n-1 && t[mid]+1==t[mid+1])
+	    	 	    	{
+	    	 	    		count++;
+	    	 	    		mid++;
+	    	 	    	}
+	    	 	    	break;
+	    	 	 }
+
+	    	 	else if(t[mid]>start.first+p[j].second)
+	    	 	{
+	    	 		h = mid-1;
+	    	 	}
+	    	 	else
+	    	 	    l = mid+1;
+	    	 	   
+	         }
+	    
+	    	 pq.push({start.first+count+p[j].second,p[j].first});
+	    	 
+	    	}
+	 	
+		}
+		
+	 if(INT_MAX==ans)
+		    return -1;
+		    
+		 cout<<ans ;
+	 
+		
+}
