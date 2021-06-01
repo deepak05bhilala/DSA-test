@@ -1,0 +1,95 @@
+YET ANOTHER CORONAVIRUS QUESTION
+BACKEND Q1
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int bfsWithDistance(vector<int> g[], bool mark[], int u, vector<int>& dis)
+{
+	int lastMarked;
+	queue<int> q;
+
+	// push node u in queue and initialize its distance as 0
+	q.push(u);
+	dis[u] = 0;
+
+	while (!q.empty())
+	{
+		u = q.front();	 q.pop();
+		// if node is marked, update lastMarked variable
+		if (mark[u])
+			lastMarked = u;
+
+		for (int i = 0; i < g[u].size(); i++)
+		{
+			int v = g[u][i];
+			
+			if (dis[v] == -1)
+			{
+				dis[v] = dis[u] + 1;
+				q.push(v);
+			}
+		}
+	}
+	return lastMarked;
+}
+
+int findNumberofEpicenters(vector<int> g[] ,int n, int marked[], int h, int x)
+{
+	
+	bool mark[n] = {false};
+	
+	for (int i = 0; i < h; i++)
+		mark[marked[i]] = true;
+
+
+	vector<int> tmp(n, -1), dl(n, -1), dr(n, -1);
+
+	// first bfs(from any random node) to get one
+	// distant marked node
+	int u = bfsWithDistance(g, mark, 0, tmp);
+
+	/* second bfs to get other distant marked node
+		and also dl is filled with distances from first
+		chosen marked node */
+	int v = bfsWithDistance(g, mark, u, dl);
+
+	// third bfs to fill dr by distances from second
+	// chosen marked node
+	bfsWithDistance(g, mark, v, dr);
+
+	int res = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (dl[i] <= x && dr[i] <= x)
+			res++;
+	}
+	return res;
+}
+
+int main()
+{
+	int n, h, x;
+	cin>>n>>h>>x;
+	
+	int marked[h];
+	for(int i=0;i<h;i++)
+	{
+		cin>>marked[i];
+		--marked[i];
+	}
+	
+	vector<int> g[n];
+	
+	for(int i=0;i<n-1;i++)
+	{
+		int u,v;
+		cin>>u>>v;
+		u--;v--;
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	
+	cout << findNumberofEpicenters(g, n, marked, h, x);
+	return 0;
+}
