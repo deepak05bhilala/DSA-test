@@ -1,0 +1,336 @@
+YET ANOTHER CORONAVIRUS QUESTION
+BACKEND Q1
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int bfsWithDistance(vector<int> g[], bool mark[], int u, vector<int>& dis)
+{
+	int lastMarked;
+	queue<int> q;
+
+	// push node u in queue and initialize its distance as 0
+	q.push(u);
+	dis[u] = 0;
+
+	while (!q.empty())
+	{
+		u = q.front();	 q.pop();
+		// if node is marked, update lastMarked variable
+		if (mark[u])
+			lastMarked = u;
+
+		for (int i = 0; i < g[u].size(); i++)
+		{
+			int v = g[u][i];
+			
+			if (dis[v] == -1)
+			{
+				dis[v] = dis[u] + 1;
+				q.push(v);
+			}
+		}
+	}
+	return lastMarked;
+}
+
+int findNumberofEpicenters(vector<int> g[] ,int n, int marked[], int h, int x)
+{
+	
+	bool mark[n] = {false};
+	
+	for (int i = 0; i < h; i++)
+		mark[marked[i]] = true;
+
+
+	vector<int> tmp(n, -1), dl(n, -1), dr(n, -1);
+
+	// first bfs(from any random node) to get one
+	// distant marked node
+	int u = bfsWithDistance(g, mark, 0, tmp);
+
+	/* second bfs to get other distant marked node
+		and also dl is filled with distances from first
+		chosen marked node */
+	int v = bfsWithDistance(g, mark, u, dl);
+
+	// third bfs to fill dr by distances from second
+	// chosen marked node
+	bfsWithDistance(g, mark, v, dr);
+
+	int res = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (dl[i] <= x && dr[i] <= x)
+			res++;
+	}
+	return res;
+}
+
+int main()
+{
+	int n, h, x;
+	cin>>n>>h>>x;
+	
+	int marked[h];
+	for(int i=0;i<h;i++)
+	{
+		cin>>marked[i];
+		--marked[i];
+	}
+	
+	vector<int> g[n];
+	
+	for(int i=0;i<n-1;i++)
+	{
+		int u,v;
+		cin>>u>>v;
+		u--;v--;
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	
+	cout << findNumberofEpicenters(g, n, marked, h, x);
+	return 0;
+}
+
+
+
+
+DR STRANGE VS CORONAVIRUS
+BACKEND Q2
+DIKJISTRA SOLN
+
+#include <bits/stdc++.h>
+using namespace std;
+    	 vector<vector<pair<int,int>>>planets; // graph for planets routes
+		 vector<vector<int>>timestamp; // demons timing
+		 priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;//min heap
+		 int n;
+		 int ans = INT_MAX;
+	
+int main()
+{
+
+		 int m;
+		 cin>>n>>m;
+		 
+		planets.resize(n+1);
+	
+		 
+		 int a,b,c;
+		 
+		 for(int i=0;i<m;i++){
+		 	
+		 	 cin>>a>>b>>c;
+		 	 planets[a].push_back({b,c});
+		 	 
+		 	
+		 	
+		 }
+		 
+		 for(int i=1;i<=m;i++)
+		 {
+		 	  int k;
+		 	  cin>>k;
+		 	  vector<int>time_of_universe;
+		 	  int t;
+		 	  for(int i=0;i<k;i++)
+		 	  {
+		 	  	    
+		 	  	    cin>>t;
+		 	  	    
+		 	  	    time_of_universe.push_back(t);
+		 	  	    
+		 	  	    
+		 	  }
+		 	  
+		 	  timestamp.push_back(time_of_universe);
+		 	  
+		 	
+		 }
+		
+	        
+			int count=0;
+	    	 
+	    	 pq.push({count,1});
+	    	 bool visited[n+1];
+	    	 memset(visited,false,sizeof(visited));
+	    	 
+	    	 
+	    	while(!pq.empty())
+	    	{
+	    		
+	    	pair<int,int> start = pq.top();
+	    	
+	    	  
+	    	        
+	    	        	if(start.second == n)
+	    	        	{
+	    	        	  ans = start.first ;
+	    	        	  break;
+	    	        	}
+	    	        	
+	    	        
+	        vector<pair<int,int>>p = planets[start.second];
+	        
+	           pq.pop();
+	    
+	         for(int j=0;j<p.size();j++){
+				vector<int>t = timestamp[p[j].first-1];
+			count=0;
+	    	
+	    	 int l=0; 
+	    	 int h = t.size()-1;
+	    	 //binary_search 
+	    	 while(l<=h)
+	    	 {
+	    	 	
+	    	 	int mid = (l+(h-l)/2);
+	    	 	
+	    	 	if(t[mid] == start.first+p[j].second)
+	    	 	{
+	    	 		
+	    	 	    	while(mid<n-1 && t[mid]+1==t[mid+1])
+	    	 	    	{
+	    	 	    		count++;
+	    	 	    		mid++;
+	    	 	    	}
+	    	 	    	break;
+	    	 	 }
+
+	    	 	else if(t[mid]>start.first+p[j].second)
+	    	 	{
+	    	 		h = mid-1;
+	    	 	}
+	    	 	else
+	    	 	    l = mid+1;
+	    	 	   
+	         }
+	    
+	    	 pq.push({start.first+count+p[j].second,p[j].first});
+	    	 
+	    	}
+	 	
+		}
+		
+	 if(INT_MAX==ans)
+		    return -1;
+		    
+		 cout<<ans ;
+	 
+		
+}
+
+
+
+
+DFS SOLN 
+#include <bits/stdc++.h>
+using namespace std;
+    	 vector<vector<pair<int,int>>>planets;
+		 vector<vector<int>>timestamp;
+		 int n;
+		 int ans = INT_MAX;
+	 void fun(int start,int end,int time_t)
+	    {
+	    	
+	    	cout<<start<<" "<<end<<" "<<time_t<<endl;
+	    	  if(start==end)
+	    	  {
+	    	  	ans = min(ans,time_t);
+	    	  	return ;
+	    	  }
+	    	  
+	    	 vector<int>t = timestamp[start-1];
+	    	 
+	    	 
+	    	 int i;
+	    	 int count=0;
+
+// timing for demons 
+	    	 for(i=0;i<t.size();i++)
+	    	 {
+	    	 	
+	    	 	   if(t[i]>time_t||t[t.size()-1]<=time_t)
+	    	 	         break;
+	    	 	  
+	    	 	    if(t[i]==time_t)
+	    	 	    {
+	    	 	    	while(i<n-1 && t[i]+1==t[i+1])
+	    	 	    	{
+	    	 	    		count++;
+	    	 	    		i++;
+	    	 	    	}
+	    	 	    	break;
+	    	 	    }
+	    	 }
+	    	 
+	    	// cout<<"count"<<" "<<count<<endl;
+	    	 time_t = time_t+count ;
+	    	 
+	    	 for(auto it = planets[start].begin();it!=planets[start].end();it++)
+	    	 {
+	    	 	   fun(it->first,end,time_t+it->second); 
+	    	 }
+	    	 
+	    	  return;
+	    }
+int main()
+{
+
+		 int m;
+		 cin>>n>>m;
+		 
+		planets.resize(n+1);
+	
+		 
+		 int a,b,c;
+		 
+		 for(int i=0;i<m;i++){
+		 	
+		 	 cin>>a>>b>>c;
+		 	 planets[a].push_back({b,c});
+		 	
+		 	
+		 }
+		 
+		 for(int i=1;i<=m;i++)
+		 {
+		 	  int k;
+		 	  cin>>k;
+		 	  vector<int>time_of_universe;
+		 	  int t;
+		 	  for(int i=0;i<k;i++)
+		 	  {
+		 	  	    
+		 	  	    cin>>t;
+		 	  	    
+		 	  	    time_of_universe.push_back(t);
+		 	  	    
+		 	  	    
+		 	  }
+		 	  
+		 	  timestamp.push_back(time_of_universe);
+		 	  
+		 	
+		 }
+		
+		 
+		 
+		 fun(1,n,0);
+		 
+		 if(INT_MAX==ans)
+		    return -1;
+		    
+		 cout<<ans ;
+		 
+		 
+		
+        
+		 
+		
+}
+
+
+
